@@ -16,6 +16,6 @@ implementation.
 
 
 [reel]:http://reel360.org
-[license]:https://raw.github.com/pisi/Reel/master/LICENSE.txt
+[license]:https://raw.github.com/introquest/jquery.reel/master/LICENSE.txt
 [AMD]:http://en.wikipedia.org/wiki/Asynchronous_module_definition
 [CommonJS]:http://en.wikipedia.org/wiki/CommonJS

@@ -263,5 +263,5 @@ Initial version 1.0
 
 
 
-[faq]:http://github.com/pisi/Reel/wiki/FAQ
-[cdn]:http://github.com/pisi/Reel/wiki/CDN
+[faq]:http://github.com/introquest/jquery.reel/wiki/FAQ
+[cdn]:http://github.com/introquest/jquery.reel/wiki/CDN

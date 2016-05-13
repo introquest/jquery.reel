@@ -30,7 +30,7 @@
 
   asyncTest( 'GH-4 Proper background positioning range for stitched non-looping panoramas', function(){
     /* Github issue 4 bugfix
-     * http://github.com/pisi/Reel/issues/#issue/4
+     * http://github.com/introquest/jquery.reel/issues/#issue/4
      */
     var
       iesaurus = browser.msie && +browser.version < 9, // Flag for IE 8- quirks
@@ -62,7 +62,7 @@
 
   asyncTest( 'GH-6 Proper background positioning range for stitched looping panoramas', function(){
     /* Github issue 6 bugfix
-     * http://github.com/pisi/Reel/issues/#issue/6
+     * http://github.com/introquest/jquery.reel/issues/#issue/6
      */
     var
       iesaurus = browser.msie && +browser.version < 9, // Flag for IE 8- quirks
@@ -93,7 +93,7 @@
 
   asyncTest( 'GH-11 First frame disappears after image sequence loading is complete', function(){
     /* Github issue 11 bugfix
-     * http://github.com/pisi/Reel/issues/#issue/11
+     * http://github.com/introquest/jquery.reel/issues/#issue/11
      * Replacement of original image source with embedded transparent sprite
      * can not happen when using `images` option
      */
@@ -129,7 +129,7 @@
 
   asyncTest( 'GH-30 Broken "play" in IE', function(){
     /* Github issue 30 bugfix
-     * http://github.com/pisi/Reel/issues/#issue/30
+     * http://github.com/introquest/jquery.reel/issues/#issue/30
      * First of all, private `slidable` boolean flag leaked into global scope
      * and also caused Reel to throw JS errors.
      * Then adaptive ticker timeout sometimes went sub-zero causing IE to invalidate such `setTimeout` call
@@ -220,7 +220,7 @@
   });
 
     /* Github issue 46 bugfix
-     * http://github.com/pisi/Reel/issues/#issue/46
+     * http://github.com/introquest/jquery.reel/issues/#issue/46
      * When topmost row has been reached with dragging, the instance freeze in that row
      * no matter the vertical direction of the drag. Instance then has to be dragged
      * left or right to restore the vertical movement. Unfortunately enough
@@ -641,7 +641,7 @@
 
   asyncTest( 'GH-42 Incorrect starting frame', function(){
     /* Github issue 42 bugfix
-     * http://github.com/pisi/Reel/issues/#issue/42
+     * http://github.com/introquest/jquery.reel/issues/#issue/42
      */
     var
       $reel,

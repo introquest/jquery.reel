@@ -30,4 +30,4 @@ implementation.
 
 
 [reel]:http://reel360.org
-[license]:https://raw.github.com/pisi/Reel/master/MIT-LICENSE.txt
+[license]:https://raw.github.com/introquest/jquery.reel/master/MIT-LICENSE.txt

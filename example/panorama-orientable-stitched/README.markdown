@@ -26,5 +26,5 @@ implementation.
 
 
 [reel]:http://reel360.org
-[license]:https://raw.github.com/pisi/Reel/master/LICENSE.txt
+[license]:https://raw.github.com/introquest/jquery.reel/master/LICENSE.txt
 [fancybox]:http://fancybox.net

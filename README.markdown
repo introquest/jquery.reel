@@ -84,17 +84,17 @@ For options head to plugin [options on-line reference][options] or view the [ent
 
 [demo]: http://reel360.org/reel#demo
 [docs]: http://test.vostrel.net/jquery.reel/docs/jquery.reel.html
-[docs-copy]: http://github.com/pisi/Reel/tree/master/docs
+[docs-copy]: http://github.com/introquest/jquery.reel/tree/master/docs
 [examples]: http://test.vostrel.net/jquery.reel/example
 [options]: http://reel360.org/reel#options
-[changelog]: http://github.com/pisi/Reel/blob/master/CHANGELOG.markdown
-[license]: https://raw.github.com/pisi/Reel/master/LICENSE.txt
+[changelog]: http://github.com/introquest/jquery.reel/blob/master/CHANGELOG.markdown
+[license]: https://raw.github.com/introquest/jquery.reel/master/LICENSE.txt
 [jquery]: http://www.jquery.com/
 [mousewheel]: http://github.com/brandonaaron/jquery-mousewheel
 [wheel]: http://blog.threedubmedia.com/2008/08/eventspecialwheel.html
-[source]: http://github.com/pisi/Reel/raw/v1.3.0/jquery.reel.js
-[min]: http://github.com/pisi/Reel/raw/v1.3.0/jquery.reel-min.js
-[zip]: http://github.com/pisi/Reel/zipball/v1.3.0
+[source]: http://github.com/introquest/jquery.reel/raw/v1.3.1/jquery.reel.js
+[min]: http://github.com/introquest/jquery.reel/raw/v1.3.!/jquery.reel.min.js
+[zip]: http://github.com/introquest/jquery.reel/zipball/v1.3.1
 [iphone-test]: http://www.youtube.com/watch?v=R0hiYmVre6s
-[cdn]: http://wiki.github.com/pisi/Reel/cdn
+[cdn]: http://wiki.github.com/introquest/jquery.reel/cdn
 [cdn-bundle]: http://code.vostrel.net/jquery.reel-bundle.js

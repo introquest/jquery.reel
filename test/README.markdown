@@ -213,5 +213,5 @@ for collection and analysis. The report contains this:
 
 
 [test]:http://test.vostrel.net/jquery.reel/test
-[FAQ]:https://github.com/pisi/Reel/wiki/FAQ
+[FAQ]:https://github.com/introquest/jquery.reel/wiki/FAQ
 [pisi]:mailto:petr@vostrel.cz

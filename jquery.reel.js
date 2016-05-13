@@ -23,8 +23,8 @@
  *
  * jQuery Reel
  * http://reel360.org
- * Version: 1.3.0
- * Updated: 2013-11-04
+ * Version: 1.3.1
+ * Updated: 2016-05-13
  *
  * Requires jQuery 1.6.2 or higher
  */
@@ -61,9 +61,9 @@
   var
     amd= typeof define == 'function' && define.amd && (define(['jquery'], factory) || true),
     commonjs= !amd && typeof module == 'object' && typeof module.exports == 'object' && (module.exports= factory),
-    plain= !amd && !commonjs && factory()
+    plain= !amd && !commonjs && factory(jQuery)
 
-})(function(){ return jQuery.reel || (function($, window, document, undefined){
+})(function(jQuery){ return jQuery.reel || (function($, window, document, undefined){
 
   // ------
   // jQuery
@@ -85,13 +85,38 @@
   // It is locally referenced as just `reel` for speedier access.
   //
   var
-    reel= $.reel= {
+    reel = $.reel= function(containers, defaultOptions) {
+      if (!arguments.length) {
+        throw new Error('Invalid arguments for Reel');
+      }
+      return $.each(containers, function(ix, image){
+        var
+            $image= $(image),
+            options= $image.data(),
+            images= options.images= soft_array(options.images),
+            annotations= {};
+        $(dot(annotation_klass)+'[data-for='+$image.attr(_id_)+']').each(function(ix, annotation){
+          var
+              $annotation= $(annotation),
+              def= $annotation.data(),
+              x= def.x= numerize_array(soft_array(def.x)),
+              y= def.y= numerize_array(soft_array(def.y)),
+              id= $annotation.attr(_id_),
+              node= def.node= $annotation.removeData();
+          annotations[id] = def;
+        });
+        options.annotations = annotations;
+        $image.removeData().reel($.extend({}, defaultOptions, options));
+      });
+    };
+
+    $.extend(reel, {
 
       // ### `$.reel.version`
       //
       // `String` (major.minor.patch), since 1.1
       //
-      version: '1.3.0',
+      version: '1.3.1',
 
       // Options
       // -------
@@ -396,7 +421,7 @@
         // frames in a single file. This powerful technique of using a sheet of several individual images
         // has many advantages in terms of compactness, loading, caching, etc. However, know your enemy,
         // be also aware of the limitations, which stem from memory limits of mobile
-        // (learn more in [FAQ](https://github.com/pisi/Reel/wiki/FAQ)).
+        // (learn more in [FAQ](https://github.com/introquest/jquery.reel/wiki/FAQ)).
         //
         // Inside the sprite, individual frames are laid down one by one, to the right of the previous one
         // in a straight _Line_:
@@ -707,7 +732,7 @@
         // To further visually describe your scene you can place all kinds of in-picture HTML annotations
         // by defining an `annotations` object. Learn more about [Annotations][1] in a dedicated article.
         //
-        // [1]:https://github.com/pisi/Reel/wiki/Annotations
+        // [1]:https://github.com/introquest/jquery.reel/wiki/Annotations
         //
         // ---
 
@@ -819,25 +844,7 @@
       // [NEW] returns `jQuery`, since 1.3
       //
       scan: function(){
-        return $(dot(klass)+':not('+dot(overlay_klass)+' > '+dot(klass)+')').each(function(ix, image){
-          var
-            $image= $(image),
-            options= $image.data(),
-            images= options.images= soft_array(options.images),
-            annotations= {}
-          $(dot(annotation_klass)+'[data-for='+$image.attr(_id_)+']').each(function(ix, annotation){
-            var
-              $annotation= $(annotation),
-              def= $annotation.data(),
-              x= def.x= numerize_array(soft_array(def.x)),
-              y= def.y= numerize_array(soft_array(def.y)),
-              id= $annotation.attr(_id_),
-              node= def.node= $annotation.removeData()
-            annotations[id] = def;
-          });
-          options.annotations = annotations;
-          $image.removeData().reel(options);
-        });
+        return reel($(dot(klass)+':not('+dot(overlay_klass)+' > '+dot(klass)+')'));
       },
 
       // -------
@@ -1521,7 +1528,7 @@
                   // Historically `pan` was once called `slide` (conflicted with Mootools - [GH-51][1])
                   // or `drag` (that conflicted with MSIE).
                   //
-                  // [1]:https://github.com/pisi/Reel/issues/51
+                  // [1]:https://github.com/introquest/jquery.reel/issues/51
                   //
                   pan: function(e, x, y, ev){
                     if (opt.draggable && slidable){
@@ -1833,7 +1840,7 @@
                   // Learn more about [Annotations][1] in the wiki, where a great care has been taken
                   // to in-depth explain this new exciting functionality.
                   //
-                  // [1]:https://github.com/pisi/Reel/wiki/Annotations
+                  // [1]:https://github.com/introquest/jquery.reel/wiki/Annotations
                   //
                   'setup.annotations': function(e){
                     var
@@ -2335,7 +2342,7 @@
       // on Google cloud infrastructure. If you want to ease up on the servers, please consider setting up
       // your own location with the cursors.
       //
-      // [1]:https://github.com/pisi/Reel/wiki/CDN
+      // [1]:https://github.com/introquest/jquery.reel/wiki/CDN
       //
       // ---
 
@@ -2643,13 +2650,13 @@
       // `Number`, since 1.1
       //
       cost: 0
-    },
+    });
 
     // ------------------------
     // Private-scoped Variables
     // ------------------------
     //
-    pool= $(document),
+    var pool= $(document),
     client= navigator.userAgent,
     browser= reel.re.ua[0].exec(client) || reel.re.ua[1].exec(client) || reel.re.ua[2].exec(client),
     browser_version= +browser[2].split('.').slice(0,2).join('.'),
@@ -2784,7 +2791,7 @@
     cleanDataEvent= $.cleanData= function(elements){
       $(elements).each(function(){ $(this).triggerHandler('clean'); });
       return cleanData.apply(this, arguments);
-    }
+    };
 
   // Expose plugin functions as jQuery methods, do the initial global scan for data-configured
   // `<img`> tags to become enhanced and export the entire namespace module.
