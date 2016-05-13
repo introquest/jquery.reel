@@ -38,6 +38,7 @@
         images: 'Array',
         lo: 'Number',
         loading: 'Boolean',
+        monitor: 'String',
         opening: 'Boolean',
         opening_ticks: 'Number',
         options: 'Object',
@@ -310,6 +311,20 @@
     },
     'non-looping': {
       options: {
+        loops: false
+      },
+      probes: {
+        '3': 1,
+        '1.8': 1,
+        '0.4': 0.4,
+        '-0.3': 0,
+        '-1.2': 0
+      }
+    },
+    'non-looping-multirow': {
+      options: {
+        rows: 3,
+        row: 2,
         loops: false
       },
       probes: {

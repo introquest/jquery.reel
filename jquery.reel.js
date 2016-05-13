@@ -18,7 +18,7 @@
  * ===========
  * The 360° plugin for jQuery
  *
- * @license Copyright (c) 2009-2013 Petr Vostrel (http://petr.vostrel.cz/)
+ * @license Copyright (c) 2009-2014 Petr Vostrel (http://petr.vostrel.cz/)
  * Licensed under the MIT License (LICENSE.txt).
  *
  * jQuery Reel
@@ -1118,9 +1118,10 @@
                   set(_rowlock_, opt.rowlock);
                   set(_framelock_, opt.framelock);
                   set(_departure_, set(_destination_, set(_distance_, 0)));
-                  set(_bit_, 1 / frames);
+                  set(_bit_, 1 / (frames - +!loops));
                   set(_stage_, stage_id);
-                  set(_backwards_, set(_speed_, opt.speed) < 0);
+                  set(_speed_, opt.speed);
+                  set(_backwards_, false);
                   set(_loading_, false);
                   set(_velocity_, 0);
                   set(_vertical_, opt.vertical);
@@ -1140,6 +1141,7 @@
                   set(_ticks_, -1);
                   set(_annotations_, opt.annotations || $overlay.unbind(dot(_annotations_)) && {});
                   set(_ratio_, 1);
+                  set(_monitor_, '');
                   set(_backup_, {
                     attr: attr,
                     data: data
@@ -1195,7 +1197,7 @@
                     t.parent().unbind(on.instance);
                     if (get(_shy_)) t.parent().unbind(_click_, shy_setup)
                     else get(_style_).remove() && get(_area_).unbind(ns);
-                    get(_cache_).empty();
+                    get(_cache_).remove();
                     clearTimeout(delay);
                     clearTimeout(gauge_delay);
                     $(window).unbind(_resize_, slow_gauge);
@@ -1245,8 +1247,7 @@
                     opt.hint && $area.attr('title', opt.hint);
                     opt.indicator && $overlay.append(indicator('x'));
                     multirow && opt.indicator && $overlay.append(indicator('y'));
-                    opt.monitor && $overlay.append($monitor= $(tag(_div_), { 'class': monitor_klass }))
-                                && css(___+dot(monitor_klass), { position: _absolute_, left: 0, top: 0 });
+                    opt.monitor && $overlay.append(monitor())
                   },
 
                   // ### `preload` Event ######
@@ -1272,7 +1273,7 @@
                       uris= []
                     $overlay.addClass(loading_klass);
                     // It also finalizes the instance stylesheet and prepends it to the head.
-                    set(_style_, get(_style_) || $('<'+_style_+' type="text/css">'+css.rules.join('\n')+'</'+_style_+'>').prependTo(_head_));
+                    set(_style_, get(_style_) || $(sanitize('<'+_style_+' type="text/css">'+css.rules.join('\n')+'</'+_style_+'>')).prependTo(_head_));
                     set(_loading_, true);
                     t.trigger('stop');
                     opt.responsive && gauge();
@@ -1293,7 +1294,7 @@
                     set(_shy_, false);
                     function load(){
                       var
-                        $img= $cache.children(':not([src]):first')
+                        $img= $cache.children(':not([src]),[src=""]').first()
                       return $img.attr(_src_, $img.data(_src_))
                     }
                   },
@@ -1615,7 +1616,7 @@
                     if (!slidable || operated) return;
                     oriented= true;
                     var
-                      alpha_fraction= alpha / 360
+                      alpha_fraction= alpha / 360,
                       fraction= set(_fraction_, +((opt.stitched || opt.cw ? 1 - alpha_fraction : alpha_fraction)).toFixed(2))
                     slidable = false;
                   },
@@ -1826,6 +1827,17 @@
                   // Indicators are bound to `fraction` or `row` changes, meaning they alone can consume
                   // more CPU resources than the entire Reel scene. Use them for development only.
                   //
+
+                  // -----------------
+                  // Debugging Monitor
+                  // -----------------
+                  //
+                  // With [`monitor`](#monitor-Option) option set, a simple text node in the upper left corner
+                  // of the scene is continuously updated with the actual value of given monitored data field.
+                  // 
+                  monitorChange: function(e, nil, value){
+                    monitor.$.text(value);
+                  },
 
                   // -----------
                   // Annotations
@@ -2057,7 +2069,7 @@
                     if (braking) var
                       braked= velocity - (get(_brake_) / leader_tempo * braking),
                       velocity= set(_velocity_, braked > 0.1 ? braked : (braking= operated= 0))
-                    monitor && $monitor.text(get(monitor));
+                    monitor && set(_monitor_, get(monitor)+__);
                     velocity && braking++;
                     operated && operated++;
                     to_bias(0);
@@ -2125,7 +2137,14 @@
 
               // - Constructors of UI elements
               //
-              $monitor= $(),
+              monitor= function(){
+                css(___+dot(monitor_klass), {
+                  position: _absolute_,
+                  left: 0,
+                  top: 0
+                });
+                return monitor.$= $(tag(_div_), { 'class': monitor_klass })
+              },
               preloader= function(){
                 css(___+dot(preloader_klass), {
                   position: _absolute_,
@@ -2557,6 +2576,11 @@
             result= round(opt.loops ? frame % frames || frames : min_max(1, frames, frame))
           return result < 0 ? result + frames : result
         },
+        speed: function(speed, data){
+          var
+            backwards= data[_backwards_]= speed < 0
+          return speed;
+        },
         images: function(images, data){
           var
             sequence= reel.re.sequence.exec(images),
@@ -2718,7 +2742,7 @@
     _height_= 'height', _hi_= 'hi', _hidden_= 'hidden',
     _image_= 'image', _images_= 'images',
     _lo_= 'lo', _loading_= 'loading',
-    _mouse_= 'mouse',
+    _monitor_= 'monitor', _mouse_= 'mouse',
     _opening_= 'opening', _opening_ticks_= _opening_+'_ticks', _options_= 'options',
     _playing_= 'playing', _preloaded_= 'preloaded',
     _ratio_= 'ratio', _reeling_= 'reeling', _reeled_= 'reeled', _responsive_= 'responsive', _revolution_= 'revolution',
@@ -2823,6 +2847,7 @@
   function detached($node){ return !$node.parents(_html_).length }
   function numerize_array(array){ return typeof array == _string_ ? array : $.each(array, function(ix, it){ array[ix]= it ? +it : undefined }) }
   function error(message){ try{ console.error('[ Reel ] '+message) }catch(e){} }
+  function sanitize(html){ return window.toStaticHTML ? toStaticHTML(html) : html }
 })(jQuery, window, document);
 
 });

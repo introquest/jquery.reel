@@ -28,6 +28,58 @@
 
   module('Issues', reel_test_module_routine);
 
+  asyncTest( 'GH-243 Preloading of images', function(){
+    /* Github issue 243
+     * Problems with loading in IE 6 and 7 when using jQuery 1.7.1 up to 1.9.1
+     * http://github.com/pisi/Reel/issues/243
+     */
+    var
+      $reel= $('#image'),
+      hits= 0
+
+    expect( 11 );
+
+    $(document).bind('preload.test', function(){
+      ok( true, 'Preload triggered');
+      ok( $.reel.instances.reel('cache').jquery, 'Preloading cache jQuery collection exists');
+      equal( $.reel.instances.reel('cache').length, 1, 'Preloading cache population');
+
+      setTimeout(function(){
+        var
+          src= $reel.reel('cache').children().attr('src')
+  
+        ok( src && src.match($.reel.re.path), 'Image `src` has been assigned for the actual preload');
+        ok( !$reel.is('.reel-loading'), 'Loading flag has been removed from the instance');
+        ok( !$reel.reel('loading'), 'Loading state updated');
+        ok( hits > 5, 'Actually animating');
+
+        start();
+      }, 1000);
+    });
+
+    $(document).bind('loaded.test', function(){
+      ok( true, 'Image has been loaded');
+    });
+
+    $(document).bind('preloaded.test', function(){
+      ok( true, 'All images have been loaded. Preload finished'); // because it is just one image
+    });
+
+    $(document).bind('play.test', function(){
+      ok( true, 'Animation played');
+      ok( $reel.reel('playing'), 'Reel is playing');
+    });
+
+    $(document).bind('frameChange.test', function(){
+      hits++;
+    });
+
+    $reel.reel({
+      speed: 1
+    })
+
+  });
+
   asyncTest( 'GH-4 Proper background positioning range for stitched non-looping panoramas', function(){
     /* Github issue 4 bugfix
      * http://github.com/introquest/jquery.reel/issues/#issue/4
@@ -669,6 +721,78 @@
         start();
       }
     }
+  });
+
+  asyncTest( 'GH-244 Looping of fraction in non-looping multirow setups', function(){
+    /* Github issue 244 bugfix
+     * http://github.com/pisi/Reel/issues/244
+     */
+    expect( 2 );
+
+    var
+      $reel= $('#image').reel({
+        rows: 3,
+        row: 2,
+        frames: 10,
+        frame: 6,
+        loops: false
+      })
+
+    $(document).bind('loaded.test', function(){
+
+      $reel.reel('fraction', 0);
+      equal( $reel.reel('frame'), 11, 'First frame of row 2');
+
+      $reel.reel('fraction', 1);
+      equal( $reel.reel('frame'), 20, 'Last frame of row 2');
+
+      start();
+    });
+
+  });
+
+  asyncTest( 'GH-241 Negative initial speed', function(){
+    /* 
+     * http://github.com/pisi/Reel/issues/241
+     */
+    expect( 1 );
+
+    var
+      frame,
+      $reel= $('#image').reel({
+        frame: 15,
+        speed: -0.1
+      })
+
+    $(document).bind('play.test', function(){
+      $(document).bind('frameChange.test', function(){
+        if (!frame){
+          frame= $reel.reel('frame');
+        }else{
+          ok( $reel.reel('frame') < frame, 'Frames progress backwards');
+          start();
+        }
+      });
+    });
+
+  });
+
+  asyncTest( 'GH-263 Cache element teardown', function(){
+    /* 
+     * http://github.com/pisi/Reel/issues/263
+     */
+    expect( 1 );
+
+    var
+      frame,
+      $reel= $('#image').reel(),
+      $reel= $('#image').reel()
+
+    $(document).bind('loaded.test', function(){
+      ok( $('.reel-cache').length == 1, 'Loading cache of the first instance is removed.');
+      start();
+    });
+
   });
 
 })(jQuery);
