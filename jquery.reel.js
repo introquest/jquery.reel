@@ -74,9 +74,10 @@
   //
   if (!$) return;
   var
-    version= $ && $().jquery.split(/\./)
-  if (!version || +(twochar(version[0])+twochar(version[1])+twochar(version[2] || '')) < 10602)
+    version= $ && $().jquery.split(/\./);
+  if (!version || +(twochar(version[0])+twochar(version[1])+twochar(version[2] || '')) < 10602) {
     return error('Too old jQuery library. Please upgrade your jQuery to version 1.6.2 or higher');
+  }
   // ----------------
   // Global Namespace
   // ----------------
@@ -89,9 +90,9 @@
       if (!arguments.length) {
         throw new Error('Invalid arguments for Reel');
       }
-      return $.each(containers, function(ix, image){
+      return $.each(containers, function(){
         var
-            $image= $(image),
+            $image= $(this).unreel(),
             options= $image.data(),
             images= options.images= soft_array(options.images),
             annotations= {};
@@ -106,7 +107,7 @@
           annotations[id] = def;
         });
         options.annotations = annotations;
-        $image.removeData().reel($.extend({}, defaultOptions, options));
+        $image.reel($.extend({}, defaultOptions, options));
       });
     };
 
@@ -879,7 +880,7 @@
             t= $(this),
             data= t.data(),
             name= args[0] || {},
-            value= args[1]
+            value= args[1];
 
           // The main [core of this procedure](#Construction-Core) is rather bulky, so let's skip it for now
           // and instead let me introduce the other uses first.
@@ -1037,7 +1038,7 @@
                 attr= opt.attr,
                 src= attr.src || $this.attr(_src_),
                 width= attr.width || $this.attr(_height_) || $this.width(),
-                height= attr.height || $this.attr(_width_) || $this.height()
+                height= attr.height || $this.attr(_width_) || $this.height();
               if (!src) return error('`src` attribute missing on target image');
               if (!width || !height) return error('Dimension(s) of the target image unknown');
               return true;
@@ -1105,7 +1106,7 @@
                     $overlay= $(tag(_div_), { id: stage_id.substr(1), 'class': classes+___+overlay_klass+___+frame_klass+'0' }),
                     $instance= t.wrap($overlay.addClass(opt.klass)).addClass(klass),
                     instances_count= instances.push(add_instance($instance)[0]),
-                    $overlay= $instance.parent().bind(on.instance)
+                    $overlay= $instance.parent().bind(on.instance);
                   set(_image_, images.length ? __ : opt.image || src.replace(reel.re.image, '$1' + opt.suffix + '.$2'));
                   set(_cache_, $(tag(_div_), { 'class': cache_klass }).appendTo('body'));
                   set(_area_, $()),
@@ -1192,11 +1193,10 @@
                   // - and unbinds all its events.
                   //
                   teardown: function(e){
-                    var
-                      backup= t.data(_backup_)
+                    var backup= t.data(_backup_);
                     t.parent().unbind(on.instance);
-                    if (get(_shy_)) t.parent().unbind(_click_, shy_setup)
-                    else get(_style_).remove() && get(_area_).unbind(ns);
+                    if (get(_shy_)) { t.parent().unbind(_click_, shy_setup); }
+                    else { get(_style_).remove() && get(_area_).unbind(ns); }
                     get(_cache_).remove();
                     clearTimeout(delay);
                     clearTimeout(gauge_delay);
@@ -1227,14 +1227,14 @@
                       multirow= opt.rows > 1,
                       cursor= opt.cursor,
                       cursor_up= cursor == _hand_ ? drag_cursor : cursor || reel_cursor,
-                      cursor_down= cursor == _hand_ ? drag_cursor_down+___+'!important' : undefined
+                      cursor_down= cursor == _hand_ ? drag_cursor_down+___+'!important' : undefined;
                     css(___+dot(klass), { MozUserSelect: _none_, WebkitUserSelect: _none_, MozTransform: 'translateZ(0)' });
                     t.unbind(_click_, shy_setup);
                     $area
                       .bind(_touchstart_, press)
                       .bind(opt.clickfree ? _mouseenter_ : _mousedown_, press)
                       .bind(opt.wheelable ? _mousewheel_ : null, wheel)
-                      .bind(_dragstart_, function(){ return false })
+                      .bind(_dragstart_, function(){ return false });
                     css(__, { cursor: cdn(cursor_up) });
                     css(dot(loading_klass), { cursor: 'wait' });
                     css(dot(panning_klass)+____+dot(panning_klass)+' *', { cursor: cdn(cursor_down || cursor_up) }, true);
@@ -1270,7 +1270,7 @@
                       preloaded= set(_preloaded_, is_sprite ? 0.5 : 0),
                       simultaneous= 0,
                       $cache= get(_cache_).empty(),
-                      uris= []
+                      uris= [];
                     $overlay.addClass(loading_klass);
                     // It also finalizes the instance stylesheet and prepends it to the head.
                     set(_style_, get(_style_) || $(sanitize('<'+_style_+' type="text/css">'+css.rules.join('\n')+'</'+_style_+'>')).prependTo(_head_));
@@ -1281,7 +1281,7 @@
                     while(preload.length){
                       var
                         uri= reel.substitute(opt.path+preload.shift(), get),
-                        $img= $(tag(_img_)).data(_src_, uri).appendTo($cache)
+                        $img= $(tag(_img_)).data(_src_, uri).appendTo($cache);
                       // Each image, which finishes the load triggers `"preloaded"` Event.
                       $img.bind('load error abort', function(e){
                         e.type != 'load' && t.trigger(e.type);
@@ -1293,8 +1293,7 @@
                     set(_cached_, uris);
                     set(_shy_, false);
                     function load(){
-                      var
-                        $img= $cache.children(':not([src]),[src=""]').first()
+                      var $img= $cache.children(':not([src]),[src=""]').first();
                       return $img.attr(_src_, $img.data(_src_))
                     }
                   },
@@ -1308,9 +1307,8 @@
                   preloaded: function(e){
                     var
                       images= get(_images_).length || 1,
-                      preloaded= set(_preloaded_, min(get(_preloaded_) + 1, images))
-                    if (preloaded === 1) var
-                      frame= t.trigger('frameChange', [undefined, get(_frame_)])
+                      preloaded= set(_preloaded_, min(get(_preloaded_) + 1, images));
+                    if (preloaded === 1) { t.trigger('frameChange', [undefined, get(_frame_)]); }
                     if (preloaded === images){
                       t.parent().removeClass(loading_klass);
                       t.trigger('loaded');
@@ -1380,11 +1378,11 @@
                     var
                       playing= set(_playing_, false),
                       opening= set(_opening_, false),
-                      evnt= _tick_+dot(_opening_)
+                      evnt= _tick_+dot(_opening_);
                     pool.unbind(evnt, on.pool[evnt]);
                     opt.orientable && $(window).bind(_deviceorientation_, orient);
-                    if (opt.delay > 0) delay= setTimeout(function(){ t.trigger('play') }, opt.delay * 1000)
-                    else t.trigger('play');
+                    if (opt.delay > 0) { delay= setTimeout(function(){ t.trigger('play') }, opt.delay * 1000); }
+                    else { t.trigger('play'); }
                     function orient(e){ return t.trigger('orient', [gyro(e).alpha, gyro(e).beta, gyro(e).gamma, e]) && e.give }
                   },
 
@@ -1405,7 +1403,7 @@
                       ticks= duration && set(_ticks_, ceil(duration * leader(_tempo_))),
                       backwards= set(_backwards_, speed < 0),
                       playing= set(_playing_, !!speed),
-                      stopped= set(_stopped_, !playing)
+                      stopped= set(_stopped_, !playing);
                     idle();
                   },
 
@@ -1424,7 +1422,7 @@
                       departure= set(_departure_, get(_frame_)),
                       target= set(_destination_, target),
                       shortest = set(_distance_, reel.math.distance(departure, target, frames)),
-                      speed= abs(speed || get(_speed_)) * negative_when(1, shortest < 0)
+                      speed= abs(speed || get(_speed_)) * negative_when(1, shortest < 0);
                     t.trigger('play', speed);
                   },
 
@@ -1474,7 +1472,7 @@
                         clickfree= opt.clickfree,
                         velocity= set(_velocity_, 0),
                         $area= clickfree ? get(_area_) : pools,
-                        origin= last= recenter_mouse(get(_revolution_), x, y)
+                        origin= last= recenter_mouse(get(_revolution_), x, y);
                       unidle();
                       no_bias();
                       panned= 0;
@@ -1505,7 +1503,7 @@
                       throwable = opt.throwable,
                       biases= abs(bias[0] + bias[1]) / 60,
                       velocity= set(_velocity_, !throwable ? 0 : throwable === true ? biases : min(throwable, biases)),
-                      brakes= braking= velocity ? 1 : 0
+                      brakes= braking= velocity ? 1 : 0;
                     unidle();
                     no_bias();
                     $(_html_, pools).removeClass(panning_klass);
@@ -1540,7 +1538,7 @@
                         orbital= opt.orbital,
                         scrollable= !get(_reeling_) && rows <= 1 && !orbital && opt.scrollable,
                         delta= { x: x - last.x, y: y - last.y },
-                        abs_delta= { x: abs(delta.x), y: abs(delta.y) }
+                        abs_delta= { x: abs(delta.x), y: abs(delta.y) };
                       if (ev && scrollable && abs_delta.x < abs_delta.y) return ev.give = true;
                       if (abs_delta.x > 0 || abs_delta.y > 0){
                         ev && (ev.give = false);
@@ -1549,12 +1547,12 @@
                         var
                           revolution= get(_revolution_),
                           origin= get(_clicked_location_),
-                          vertical= get(_vertical_)
+                          vertical= get(_vertical_);
                         if (!get(_framelock_)) var
                           fraction= set(_fraction_, graph(vertical ? y - origin.y : x - origin.x, get(_clicked_on_), revolution, get(_lo_), get(_hi_), get(_cwish_), vertical ? y - origin.y : x - origin.x)),
                           reeling= set(_reeling_, get(_reeling_) || get(_frame_) != get(_clicked_)),
                           motion= to_bias(vertical ? delta.y : delta.x || 0),
-                          backwards= motion && set(_backwards_, motion < 0)
+                          backwards= motion && set(_backwards_, motion < 0);
                         if (orbital && get(_center_)) var
                           vertical= set(_vertical_, abs(y - origin.y) > abs(x - origin.x)),
                           origin= recenter_mouse(revolution, x, y)
@@ -1562,7 +1560,7 @@
                           revolution_y= get(_revolution_y_),
                           start= get(_clicked_tier_),
                           lo= - start * revolution_y,
-                          tier= set(_tier_, reel.math.envelope(y - origin.y, start, revolution_y, lo, lo + revolution_y, -1))
+                          tier= set(_tier_, reel.math.envelope(y - origin.y, start, revolution_y, lo, lo + revolution_y, -1));
                         if (!(fraction % 1) && !opt.loops) var
                           origin= recenter_mouse(revolution, x, y)
                       }
@@ -1596,7 +1594,7 @@
                       origin= recenter_mouse(revolution),
                       backwards= delta && set(_backwards_, delta < 0),
                       velocity= set(_velocity_, 0),
-                      fraction= set(_fraction_, graph(delta, get(_clicked_on_), revolution, get(_lo_), get(_hi_), get(_cwish_)))
+                      fraction= set(_fraction_, graph(delta, get(_clicked_on_), revolution, get(_lo_), get(_hi_), get(_cwish_)));
                     ev && ev.preventDefault();
                     ev && (ev.give = false);
                     unidle();
@@ -1617,7 +1615,7 @@
                     oriented= true;
                     var
                       alpha_fraction= alpha / 360,
-                      fraction= set(_fraction_, +((opt.stitched || opt.cw ? 1 - alpha_fraction : alpha_fraction)).toFixed(2))
+                      fraction= set(_fraction_, +((opt.stitched || opt.cw ? 1 - alpha_fraction : alpha_fraction)).toFixed(2));
                     slidable = false;
                   },
 
@@ -1660,9 +1658,9 @@
                       frame= 1 + floor(fraction / get(_bit_)),
                       multirow= opt.rows > 1,
                       orbital= opt.orbital,
-                      center= set(_center_, !!orbital && (frame <= orbital || frame >= get(_footage_) - orbital + 2))
+                      center= set(_center_, !!orbital && (frame <= orbital || frame >= get(_footage_) - orbital + 2));
                     if (multirow) var
-                      frame= frame + (get(_row_) - 1) * get(_frames_)
+                      frame= frame + (get(_row_) - 1) * get(_frames_);
                     var
                       frame= set(_frame_, frame)
                   },
@@ -1720,14 +1718,14 @@
                       row= get(_row_),
                       tier= !rows ? get(_tier_) : may_set(_tier_, frame_tier, row, rows),
                       fraction= may_set(_fraction_, undefined, base, frames),
-                      footage= get(_footage_)
+                      footage= get(_footage_);
                     if (opt.orbital && get(_vertical_)) var
                       frame= opt.inversed ? footage + 1 - frame : frame,
-                      frame= frame + footage
+                      frame= frame + footage;
                     var
                       stitched= get(_stitched_),
                       images= get(_images_),
-                      is_sprite= !images.length || stitched
+                      is_sprite= !images.length || stitched;
                     if (!is_sprite){
                       get(_responsive_) && gauge();
                       get(_preloaded_) && t.attr({ src: reen(reel.substitute(path + images[frame - 1], get)) });
@@ -1735,7 +1733,7 @@
                       var
                         spacing= get(_spacing_),
                         width= get(_width_),
-                        height= get(_height_)
+                        height= get(_height_);
                       if (!stitched) var
                         horizontal= opt.horizontal,
                         minor= (frame % footage) - 1,
@@ -1744,14 +1742,14 @@
                         major= major + (rows > 1 ? 0 : (get(_backwards_) ? 0 : !opt.directional ? 0 : get(_rows_))),
                         a= major * ((horizontal ? height : width) + spacing),
                         b= minor * ((horizontal ? width : height) + spacing),
-                        shift= images.length ? [0, 0] : horizontal ? [px(-b), px(-a)] : [px(-a), px(-b)]
+                        shift= images.length ? [0, 0] : horizontal ? [px(-b), px(-a)] : [px(-a), px(-b)];
                       else{
                         var
                           x= set(_stitched_shift_, round(interpolate(fraction, 0, get(_stitched_travel_))) % stitched),
                           y= rows <= 1 ? 0 : (height + spacing) * (rows - row),
                           shift= [px(-x), px(-y)],
                           image= images.length > 1 && images[row - 1],
-                          fullpath= reel.substitute(path + image, get)
+                          fullpath= reel.substitute(path + image, get);
                         image && t.css('backgroundImage').search(fullpath) < 0 && t.css({ backgroundImage: url(fullpath) })
                       }
                       t.css({ backgroundPosition: shift.join(___) })
@@ -1764,7 +1762,7 @@
                     if (!get(_destination_) || nil !== undefined) return;
                     var
                       travelled= reel.math.distance(get(_departure_), frame, get(_frames_)),
-                      onorover= abs(travelled) >= abs(get(_distance_))
+                      onorover= abs(travelled) >= abs(get(_distance_));
                     if (!onorover) return;
                     set(_frame_, set(_destination_));
                     set(_destination_, set(_distance_, set(_departure_, 0)));
@@ -1834,7 +1832,7 @@
                   //
                   // With [`monitor`](#monitor-Option) option set, a simple text node in the upper left corner
                   // of the scene is continuously updated with the actual value of given monitored data field.
-                  // 
+                  //
                   monitorChange: function(e, nil, value){
                     monitor.$.text(value);
                   },
@@ -1856,14 +1854,14 @@
                   //
                   'setup.annotations': function(e){
                     var
-                      $overlay= t.parent()
+                      $overlay= t.parent();
                     $.each(get(_annotations_), function(ida, note){
                       var
                         $note= typeof note.node == _string_ ? $(note.node) : note.node || {},
                         $note= $note.jquery ? $note : $(tag(_div_), $note),
                         $note= $note.attr({ id: ida }).addClass(annotation_klass),
                         $image= note.image ? $(tag(_img_), note.image) : $(),
-                        $link= note.link ? $(tag('a'), note.link).click(function(){ t.trigger('up.annotations', { target: $link }); }) : $()
+                        $link= note.link ? $(tag('a'), note.link).click(function(){ t.trigger('up.annotations', { target: $link }); }) : $();
                       css(hash(ida), { display: _none_, position: _absolute_ }, true);
                       note.image || note.link && $note.append($link);
                       note.link || note.image && $note.append($image);
@@ -1881,7 +1879,7 @@
                     var
                       width= get(_width_),
                       stitched= get(_stitched_),
-                      ss= get(_stitched_shift_)
+                      ss= get(_stitched_shift_);
                     $.each(get(_annotations_), function(ida, note){
                       var
                         $note= $(hash(ida)),
@@ -1894,19 +1892,18 @@
                         x= typeof note.x!=_object_ ? note.x : note.x[offset],
                         y= typeof note.y!=_object_ ? note.y : note.y[offset],
                         placed= x !== undefined && y !== undefined,
-                        visible= placed && (note.at ? at : (offset >= 0 && (!end || offset <= end - start)))
+                        visible= placed && (note.at ? at : (offset >= 0 && (!end || offset <= end - start)));
                       if (stitched) var
                         on_edge= x < width && ss > stitched - width,
                         after_edge= x > stitched - width && ss >= 0 && ss < width,
                         x= !on_edge ? x : x + stitched,
                         x= !after_edge ? x : x - stitched,
-                        x= x - ss
+                        x= x - ss;
                       if (get(_responsive_)) var
                         ratio= get(_ratio_),
                         x= x && x * ratio,
-                        y= y && y * ratio
-                      var
-                        style= { display: visible ? _block_:_none_, left: px(x), top: px(y) }
+                        y= y && y * ratio;
+                      var style= { display: visible ? _block_:_none_, left: px(x), top: px(y) };
                       $note.css(style);
                     });
                   },
@@ -1915,7 +1912,7 @@
                     var
                       $target= $(ev.target),
                       $link= ($target.is('a') ? $target : $target.parents('a')),
-                      href= $link.attr('href')
+                      href= $link.attr('href');
                     href && (panned= 10);
                   },
 
@@ -1992,7 +1989,7 @@
                       size= get(_images_).length
                         ? !stitched ? undefined : px(stitched)+___+px(height)
                         : stitched && px(stitched)+___+px((height + spacing) * rows - spacing)
-                        || px((get(_width_) + spacing) * get(_footage_) - spacing)+___+px((height + spacing) * get(_rows_) * rows * (opt.directional? 2:1) - spacing)
+                        || px((get(_width_) + spacing) * get(_footage_) - spacing)+___+px((height + spacing) * get(_rows_) * rows * (opt.directional? 2:1) - spacing);
                     t.css({
                       height: is_sprite ? px(height) : null,
                       backgroundSize: size || null
@@ -2011,7 +2008,7 @@
                   //
                   'setup.fu': function(e){
                     var
-                      frame= set(_frame_, opt.frame + (get(_row_) - 1) * get(_frames_))
+                      frame= set(_frame_, opt.frame + (get(_row_) - 1) * get(_frames_));
                     t.trigger('preload')
                   },
                   'wheel.fu': function(){ wheeled= false },
@@ -2039,8 +2036,8 @@
                       width= get(_width_),
                       current= number(preloader.$.css(_width_)),
                       images= get(_images_).length || 1,
-                      target= round(1 / images * get(_preloaded_) * width)
-                    preloader.$.css({ width: current + (target - current) / 3 + 1 })
+                      target= round(1 / images * get(_preloaded_) * width);
+                    preloader.$.css({ width: current + (target - current) / 3 + 1 });
                     if (get(_preloaded_) === images && current > width - 1){
                       loaded= false;
                       preloader.$.fadeOut(300, function(){ preloader.$.css({ opacity: 1, width: 0 }) });
@@ -2064,11 +2061,11 @@
                     var
                       velocity= get(_velocity_),
                       leader_tempo= leader(_tempo_),
-                      monitor= opt.monitor
+                      monitor= opt.monitor;
                     if (!reel.intense && offscreen()) return;
                     if (braking) var
                       braked= velocity - (get(_brake_) / leader_tempo * braking),
-                      velocity= set(_velocity_, braked > 0.1 ? braked : (braking= operated= 0))
+                      velocity= set(_velocity_, braked > 0.1 ? braked : (braking= operated= 0));
                     monitor && set(_monitor_, get(monitor)+__);
                     velocity && braking++;
                     operated && operated++;
@@ -2080,13 +2077,13 @@
                     if (!opt.loops && opt.rebound) var
                       edgy= !operated && !(get(_fraction_) % 1) ? on_edge++ : (on_edge= 0),
                       bounce= on_edge >= opt.rebound * 1000 / leader_tempo,
-                      backwards= bounce && set(_backwards_, !get(_backwards_))
+                      backwards= bounce && set(_backwards_, !get(_backwards_));
                     var
                       direction= get(_cwish_) * negative_when(1, get(_backwards_)),
                       ticks= get(_ticks_),
                       step= (!get(_playing_) || oriented || !ticks ? velocity : abs(get(_speed_)) + velocity) / leader(_tempo_),
                       fraction= set(_fraction_, get(_fraction_) - step * direction),
-                      ticks= !opt.duration ? ticks : ticks > 0 && set(_ticks_, ticks - 1)
+                      ticks= !opt.duration ? ticks : ticks > 0 && set(_ticks_, ticks - 1);
                     !ticks && get(_playing_) && t.trigger('stop');
                   },
 
@@ -2099,7 +2096,7 @@
                       speed= opt.entry || opt.speed,
                       step= speed / leader(_tempo_) * (opt.cw? -1:1),
                       ticks= set(_opening_ticks_, get(_opening_ticks_) - 1),
-                      fraction= set(_fraction_, get(_fraction_) + step)
+                      fraction= set(_fraction_, get(_fraction_) + step);
                     ticks || t.trigger('openingDone');
                   }
                 }
@@ -2170,8 +2167,8 @@
               css= function(selector, definition, global){
                 var
                   stage= global ? __ : get(_stage_),
-                  selector= selector.replace(/^/, stage).replace(____, ____+stage)
-                return css.rules.push(selector+cssize(definition)) && definition
+                  selector= selector.replace(/^/, stage).replace(____, ____+stage);
+                return css.rules.push(selector+cssize(definition)) && definition;
                 function cssize(values){
                   var rules= [];
                   $.each(values, function(key, value){ rules.push(key.replace(/([A-Z])/g, '-$1').toLowerCase()+':'+px(value)+';') });
@@ -2186,7 +2183,7 @@
                 var
                   height= get(_height_),
                   width= get(_width_),
-                  rect= t[0].getBoundingClientRect()
+                  rect= t[0].getBoundingClientRect();
                 return rect.top < -height
                     || rect.left < -width
                     || rect.right > width + $(window).width()
@@ -2216,8 +2213,8 @@
                 if (t.width() == get(_width_)) return;
                 var
                   truescale= get(_truescale_),
-                  ratio= set(_ratio_, t.width() / truescale.width)
-                $.each(truescale, function(key, value){ set(key, round(value * ratio)) })
+                  ratio= set(_ratio_, t.width() / truescale.width);
+                $.each(truescale, function(key, value){ set(key, round(value * ratio)) });
                 t.trigger('resize');
               },
 
@@ -2252,7 +2249,7 @@
                   recalculated= value !== undefined ? value : (cousin - 1) / (maximum - 1),
                   recalculated= key != _fraction_ ? recalculated : min( recalculated, 0.9999),
                   worthy= +abs(current - recalculated).toFixed(8) >= +(1 / (maximum - 1)).toFixed(8),
-                  value= worthy ? set(key, recalculated) : value || current
+                  value= worthy ? set(key, recalculated) : value || current;
                 return value
               },
 
@@ -2273,9 +2270,9 @@
                 $('iframe', pools.last()).each(function(){
                   try{ if ($(this).contents().find(_head_).html() == $(_head_).html()) return ($ifr= $(this)) && false }
                   catch(e){}
-                })
+                });
                 return $ifr
-              })()
+              })();
             css.rules= [];
             on.setup();
           });
@@ -2291,7 +2288,7 @@
           ticker= ticker || (function tick(){
             var
               start= +new Date(),
-              tempo= leader(_tempo_)
+              tempo= leader(_tempo_);
             if (!tempo) return ticker= null;
             pool.trigger(_tick_);
             reel.cost= (+new Date() + reel.cost - start) / 2;
@@ -2407,7 +2404,7 @@
         hatch: function(x, start, revolution, lo, hi, cwness, y){
           var
             x= (x < lo ? hi : 0) + x % hi, // Looping
-            fraction= start + (- x * cwness) / revolution
+            fraction= start + (- x * cwness) / revolution;
           return fraction - floor(fraction)
         },
 
@@ -2422,7 +2419,7 @@
         distance: function(start, end, total){
           var
             half= total / 2,
-            d= end - start
+            d= end - start;
           return d < -half ? d + total : d > half ? d - total : d
         }
       },
@@ -2457,8 +2454,8 @@
             start= (opt.row-1) * frames,
             values= new Array().concat(sequence),
             present= new Array(sequence.length + 1),
-            priority= rows < 2 ? [] : values.slice(start, start + frames)
-          return spread(priority, 1, start).concat(spread(values, rows, 0))
+            priority= rows < 2 ? [] : values.slice(start, start + frames);
+          return spread(priority, 1, start).concat(spread(values, rows, 0));
 
           function spread(sequence, rows, offset){
             if (!sequence.length) return [];
@@ -2468,7 +2465,7 @@
               start= opt.frame,
               frames= sequence.length,
               plus= true,
-              granule= frames / passes
+              granule= frames / passes;
             for(var i= 0; i < passes; i++)
               add(start + round(i * granule));
             while(granule > 1)
@@ -2477,7 +2474,7 @@
             for(var i=0; i <= frames; i++) add(i);
             for(var i= 0; i < order.length; i++)
               order[i]= sequence[order[i] - 1];
-            return order
+            return order;
             function add(frame){
               while(!(frame >= 1 && frame <= frames))
                 frame+= frame < 1 ? +frames : -frames;
@@ -2573,18 +2570,18 @@
           var
             opt= data[_options_],
             frames= data[_frames_] * (opt.orbital ? 2 : opt.rows || 1),
-            result= round(opt.loops ? frame % frames || frames : min_max(1, frames, frame))
+            result= round(opt.loops ? frame % frames || frames : min_max(1, frames, frame));
           return result < 0 ? result + frames : result
         },
         speed: function(speed, data){
           var
-            backwards= data[_backwards_]= speed < 0
+            backwards= data[_backwards_]= speed < 0;
           return speed;
         },
         images: function(images, data){
           var
             sequence= reel.re.sequence.exec(images),
-            result= !sequence ? images : reel.sequence(sequence, data[_options_])
+            result= !sequence ? images : reel.sequence(sequence, data[_options_]);
           return result;
         }
       },
@@ -2615,7 +2612,7 @@
           end= +(sequence[5] || rows * frames),
           total= end - start,
           increment= +sequence[7] || 1,
-          counter= 0
+          counter= 0;
         while(counter <= total){
           images.push(url.replace(placeholder, pad((start + counter + __), placeholder.length, '0')));
           counter+= increment;
